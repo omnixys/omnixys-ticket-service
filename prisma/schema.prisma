@@ -1,0 +1,75 @@
+/// ----------------------------------------------------------------------
+/// Prisma Schema – Omnixys Ticket Service
+/// Author: Caleb Gyamfi
+/// License: GPL-3.0-or-later
+/// ----------------------------------------------------------------------
+
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-arm64-openssl-3.0.x", "linux-musl-arm64-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider          = "postgresql"
+  url               = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
+}
+
+/// ----------------------------------------------------------------------
+/// Ticket: main aggregate root for the ticket domain
+/// ----------------------------------------------------------------------
+model Ticket {
+  id                     String            @id @default(cuid()) @map("id")
+
+  firstName              String?           @map("first_name")
+  lastName               String?           @map("last_name")
+
+  eventId                String            @map("event_id")
+  guestProfileId         String?           @map("guest_profile_id")
+
+  status                 InvitationStatus  @default(PENDING) @map("status")
+
+  createdAt              DateTime          @default(now()) @map("created_at")
+  updatedAt              DateTime          @updatedAt       @map("updated_at")
+
+  pendingContactId       String?           @unique @map("pending_contact_id")
+
+  rsvpChoice             RsvpChoice?       @map("rsvp_choice")
+  rsvpAt                 DateTime?         @map("rsvp_at")
+
+  approved               Boolean           @default(false) @map("approved")
+  approvedAt             DateTime?         @map("approved_at")
+  approvedByUserId       String?           @map("approved_by_user_id")
+
+  maxInvitees            Int               @default(0) @map("max_invitees")
+
+  invitedByInvitationId  String?           @map("invited_by_invitation_id")
+  invitedByUserId        String?           @map("invited_by_user_id")
+
+  plusOnes               String[]          @default([]) @map("plus_ones")
+
+  @@index([eventId, status])
+  @@index([eventId, rsvpChoice])
+  @@index([invitedByInvitationId])
+  @@index([approved, approvedAt])
+
+  @@map("ticket")
+}
+
+/// ----------------------------------------------------------------------
+/// Enums
+/// ----------------------------------------------------------------------
+enum InvitationStatus {
+  PENDING
+  ACCEPTED
+  DECLINED
+  CANCELED
+  REJECTED
+  APPROVED
+}
+
+enum RsvpChoice {
+  YES
+  NO
+  MAYBE
+}

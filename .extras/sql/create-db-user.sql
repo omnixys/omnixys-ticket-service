@@ -1,0 +1,5 @@
+CREATE ROLE "ticket" LOGIN PASSWORD 'Omnixys16.11.2025';
+CREATE DATABASE "ticket";
+-- CREATE DATABASE shadow;
+GRANT ALL ON DATABASE "ticket" TO "ticket";
+GRANT ALL ON DATABASE shadow TO "ticket";
