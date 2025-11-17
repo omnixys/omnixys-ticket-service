@@ -1,4 +1,4 @@
-CREATE ROLE "ticket" LOGIN PASSWORD 'Omnixys16.11.2025';
+CREATE ROLE "ticket" LOGIN PASSWORD 'Omnixys17.11.2025';
 CREATE DATABASE "ticket";
 -- CREATE DATABASE shadow;
 GRANT ALL ON DATABASE "ticket" TO "ticket";
