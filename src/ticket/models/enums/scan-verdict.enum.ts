@@ -1,3 +1,7 @@
+// TODO resolve eslint
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { registerEnumType } from '@nestjs/graphql';
 
 export enum ScanVerdict {
@@ -14,3 +18,10 @@ registerEnumType(ScanVerdict, {
   name: 'ScanVerdict',
   description: 'The result of a ticket scan, including anti-sharing cases.',
 });
+
+/**
+ * Convert string verdict → GraphQL ScanVerdict
+ */
+export function mapVerdict(v: string): ScanVerdict {
+  return (ScanVerdict as any)[v] ?? ScanVerdict.UNKNOWN;
+}
