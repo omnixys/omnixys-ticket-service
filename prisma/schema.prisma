@@ -28,7 +28,7 @@ model Ticket {
 
   // Security: Device Binding
   deviceHash          String?       @map("device_hash")                    // Fingerprint
-  devicePublicKey     String?       @map("device_public_key")              // POP (Proof-of-Possession)
+  devicePublicKey     String?       @unique @map("device_public_key")              // POP (Proof-of-Possession)
   deviceActivationAt  DateTime?     @map("device_activation_at")
   deviceActivationIP  String?       @map("device_activation_ip")
 
@@ -49,6 +49,10 @@ model Ticket {
   scanLogs            ScanLog[]
   shareGuard          ShareGuard?
 
+  // Prevent multiple tickets per guest per event
+  @@unique([eventId, guestProfileId], name: "uq_guest_one_ticket_per_event")
+
+  @@index([deviceHash, lastNonce], name: "idx_device_hash_nonce")
   @@index([eventId], name: "idx_ticket_event")
   @@index([guestProfileId], name: "idx_ticket_guest_profile")
   @@index([seatId], name: "idx_ticket_seat")
@@ -76,6 +80,7 @@ model ScanLog {
   // Relations
   ticket      Ticket        @relation(fields: [ticketId], references: [id])
 
+  @@index([nonce], name: "idx_scanlog_nonce")
   @@index([eventId, createdAt], name: "idx_scanlog_event_ts")
   @@index([ticketId], name: "idx_scanlog_ticket")
   @@index([verdict], name: "idx_scanlog_verdict")
@@ -119,4 +124,6 @@ enum ScanVerdict {
   BLOCKED          // ShareGuard blockiert Ticket
   REVOKED          // Ticket wurde manuell deaktiviert
   UNKNOWN          // Default fallback
+  EXPIRED_EVENT
+
 }

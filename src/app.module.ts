@@ -22,6 +22,7 @@ import { HealthModule } from './health/health.module.js';
 import { LoggerModule } from './logger/logger.module.js';
 import { RequestLoggerMiddleware } from './logger/request-logger.middleware.js';
 import { KafkaModule } from './messaging/kafka.module.js';
+import { TicketModule } from './ticket/ticket.module.js';
 import { ApolloFederationDriver, ApolloFederationDriverConfig } from '@nestjs/apollo';
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
@@ -34,6 +35,7 @@ const { SCHEMA_TARGET } = env;
   imports: [
     AdminModule,
     HandlerModule,
+    TicketModule,
     HealthModule,
     LoggerModule,
     KafkaModule,
