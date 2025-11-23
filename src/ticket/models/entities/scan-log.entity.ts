@@ -1,9 +1,19 @@
+// src/ticket/models/entities/scan-log.entity.ts
 import { PresenceState } from '../enums/presence-state.enum.js';
 import { ScanVerdict } from '../enums/scan-verdict.enum.js';
-import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  ObjectType,
+  GraphQLISODateTime,
+  Int,
+} from '@nestjs/graphql';
 
 @ObjectType()
 export class ScanLog {
+  // -----------------------------------------------------
+  // Core identifiers
+  // -----------------------------------------------------
   @Field(() => ID)
   id!: string;
 
@@ -16,6 +26,9 @@ export class ScanLog {
   @Field(() => String, { nullable: true })
   byUserId?: string | null;
 
+  // -----------------------------------------------------
+  // Scan details
+  // -----------------------------------------------------
   @Field(() => PresenceState)
   direction!: PresenceState;
 
@@ -25,12 +38,18 @@ export class ScanLog {
   @Field(() => String, { nullable: true })
   gate?: string | null;
 
+  // -----------------------------------------------------
+  // Security metadata
+  // -----------------------------------------------------
   @Field(() => String, { nullable: true })
   deviceHash?: string | null;
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   nonce?: number | null;
 
+  // -----------------------------------------------------
+  // Timestamps
+  // -----------------------------------------------------
   @Field(() => GraphQLISODateTime)
   createdAt!: Date;
 }

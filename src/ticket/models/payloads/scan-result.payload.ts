@@ -1,4 +1,5 @@
-import { Ticket } from '../entities/ticket.entity.js';
+// src/ticket/models/payload/scan-result.payload.ts
+import { ScanLog } from '../entities/scan-log.entity.js';
 import { ScanVerdict } from '../enums/scan-verdict.enum.js';
 import { Field, ObjectType } from '@nestjs/graphql';
 
@@ -10,9 +11,9 @@ export class ScanResultPayload {
   @Field(() => ScanVerdict)
   verdict!: ScanVerdict;
 
-  @Field(() => Ticket, { nullable: true })
-  ticket?: Ticket;
+  @Field(() => ScanLog, { nullable: true })
+  log?: ScanLog | null;
 
-  @Field(() => String, { nullable: true })
-  reason?: string;
+  @Field({ nullable: true })
+  message?: string | null;
 }

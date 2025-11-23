@@ -1,10 +1,15 @@
-import { Field, InputType } from '@nestjs/graphql';
+// src/ticket/models/input/rotate-ticket.input.ts
+import { Field, ID, InputType, Int } from '@nestjs/graphql';
 
-@InputType()
+@InputType({
+  description: 'Rotate a ticket token and generate a new nonce pair.',
+})
 export class RotateTicketInput {
-  @Field(() => String)
+  @Field(() => ID, { description: 'Ticket ID' })
   ticketId!: string;
 
-  @Field(() => Number)
-  currentNonce!: number;
+  @Field(() => Int, {
+    description: 'Current last nonce value to validate replay protection.',
+  })
+  lastNonce!: number;
 }

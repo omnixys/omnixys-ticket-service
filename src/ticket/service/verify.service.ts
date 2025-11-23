@@ -1,8 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // src/ticket/service/verify-token.service.ts
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { ScanVerdict } from '../models/enums/scan-verdict.enum.js';

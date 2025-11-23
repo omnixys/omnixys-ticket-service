@@ -1,4 +1,10 @@
-import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql';
+import {
+  Field,
+  ID,
+  ObjectType,
+  GraphQLISODateTime,
+  Int,
+} from '@nestjs/graphql';
 
 @ObjectType()
 export class ShareGuard {
@@ -8,7 +14,7 @@ export class ShareGuard {
   @Field(() => ID)
   ticketId!: string;
 
-  @Field(() => Number)
+  @Field(() => Int)
   failCount!: number;
 
   @Field(() => GraphQLISODateTime, { nullable: true })

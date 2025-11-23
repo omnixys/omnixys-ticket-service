@@ -13,9 +13,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
-// import { LoggerPlus } from '../../logger/logger-plus.js';
-// import { LoggerPlusService } from '../../logger/logger-plus.service.js';
-// import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
 import { LoggerPlus } from '../../logger/logger-plus.js';
 import { LoggerPlusService } from '../../logger/logger-plus.service.js';
 import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
@@ -32,7 +29,6 @@ import { TogglePresence } from '../resolvers/ticket-mutation.resolver.js';
 import { TicketTokenPayload, TokenGenerator } from '../utils/token.service.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { trace, Tracer } from '@opentelemetry/api';
-// import { Tracer, trace } from '@opentelemetry/api';
 
 export interface UpdateTicketInput {
   id: string;
