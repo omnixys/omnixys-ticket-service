@@ -57,7 +57,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
   async send<T>(topic: string, message: KafkaEnvelope<T>, trace?: TraceContext): Promise<void> {
     const headers = KafkaHeaderBuilder.buildStandardHeaders(
       topic,
-      message.ticket,
+      message.event,
       trace,
       message.version,
       message.service,
@@ -80,22 +80,41 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
    * @param trace - Optionaler Tracing-Kontext
    */
   async addSeatID(
+    // TODO DTO implementieren
     payload: {
       seatId: string;
-      guestProfileId: string;
-      eventId: string;
+      guestId: string;
     },
     service: string,
     trace?: TraceContext,
   ): Promise<void> {
     const envelope: KafkaEnvelope<typeof payload> = {
-      ticket: 'addSeatId',
+      event: 'addSeatId',
       service,
       version: 'v1',
       trace,
       payload,
     };
-    await this.send(KafkaTopics.ticket.addSeat, envelope, trace);
+    await this.send(KafkaTopics.event?.addSeat, envelope, trace);
+  }
+
+  // TODO DTO implementieren
+  async addGuestID(
+    payload: {
+      guestId: string;
+      ticketId: string;
+    },
+    service: string,
+    trace?: TraceContext,
+  ): Promise<void> {
+    const envelope: KafkaEnvelope<typeof payload> = {
+      event: 'addGuestId',
+      service,
+      version: 'v1',
+      trace,
+      payload,
+    };
+    await this.send(KafkaTopics.user?.addGuest, envelope, trace);
   }
 
   async disconnect(): Promise<void> {

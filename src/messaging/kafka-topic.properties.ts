@@ -24,12 +24,17 @@ const { SERVICE } = env;
  * Dient der Typsicherheit, Übersichtlichkeit und Wiederverwendbarkeit in Publishern und Handlern.
  */
 export const KafkaTopics = {
-  [SERVICE]: {
-    receiveUserId: `${SERVICE}.sendId.authentication`,
-    receiveUserUpdate: `${SERVICE}.updateUser.authentication`,
+  user: {
+    // TODO bessere namen
+    addGuest: `${SERVICE}.add.user`,
   },
-  ticket: {
-    addSeat: 'ticket.add.seat',
+  event: {
+    // TODO bessere namen
+    addSeat: `${SERVICE}.add.event`,
+  },
+  [SERVICE]: {
+    // TODO implementieren
+    deleteTickets: `${SERVICE}.delete.user`,
   },
   logstream: {
     log: `logstream.log.${SERVICE}`,

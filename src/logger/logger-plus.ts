@@ -131,7 +131,7 @@ export class LoggerPlus {
 
             // Fire-and-Forget: blockiert nicht
             void producer.send(KafkaTopics.logstream.log, {
-              ticket: 'log',
+              event: 'log',
               service: this.serviceName,
               version: 'v1',
               trace: traceCtx,

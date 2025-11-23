@@ -32,9 +32,9 @@ export interface KafkaEnvelope<
   >,
 > {
   /**
-   * Ticket-Name (z. B. "acceptRsvp", "deleteUser")
+   * Event-Name (z. B. "acceptRsvp", "deleteUser")
    */
-  ticket: string;
+  event: string;
 
   /**
    * Ursprungs-Service (z. B. "ticket-service")
