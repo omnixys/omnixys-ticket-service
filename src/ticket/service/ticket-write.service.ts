@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-return */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 // /* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable @typescript-eslint/explicit-function-return-type */
 // // TODO resolve eslint
@@ -10,7 +8,6 @@
 // /* eslint-disable @typescript-eslint/no-unsafe-return */
 // src/ticket/service/ticket-write.service.ts
 
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 
 import { LoggerPlus } from '../../logger/logger-plus.js';
@@ -18,15 +15,21 @@ import { LoggerPlusService } from '../../logger/logger-plus.service.js';
 import { KafkaProducerService } from '../../messaging/kafka-producer.service.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { withSpan } from '../../trace/utils/span.utils.js';
+import { CreateTicketDTO } from '../models/dto/create-ticket.dto.js';
 import { ShareGuard } from '../models/entities/share-guard.entity.js';
 import { Ticket } from '../models/entities/ticket.entity.js';
 import { PresenceState } from '../models/enums/presence-state.enum.js';
 import { ScanVerdict } from '../models/enums/scan-verdict.enum.js';
+import { VerifyTokenInput } from '../models/inputs/verify-token.input.js';
 import { mapScanLog } from '../models/mapper/scan-logs.mapper.js';
 import { mapTicket } from '../models/mapper/ticket.mapper.js';
 import { VerifyPayload } from '../models/payloads/verify.payload.js';
-import { TogglePresence } from '../resolvers/ticket-mutation.resolver.js';
-import { TicketTokenPayload, TokenGenerator } from '../utils/token.service.js';
+import { GenerateTokenInput, TogglePresence } from '../resolvers/ticket-mutation.resolver.js';
+import {
+  decodeWithoutDots,
+  generateWithoutDots,
+  TicketTokenPayload,
+} from '../utils/token.service.js';
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { trace, Tracer } from '@opentelemetry/api';
 
@@ -54,12 +57,7 @@ export class TicketWriteService {
   // -------------------------------------------------------------
   // 1) Create a ticket after Invitation is approved
   // -------------------------------------------------------------
-  async createTicket(data: {
-    eventId: string;
-    invitationId: string;
-    guestProfileId?: string | null;
-    seatId?: string | null;
-  }): Promise<Ticket> {
+  async createTicket(data: CreateTicketDTO): Promise<Ticket> {
     return withSpan(this.tracer, this.logger, 'ticket.createTicket', async (span) => {
       const existing = await this.prisma.ticket.findUnique({
         where: { invitationId: data.invitationId },
@@ -95,6 +93,9 @@ export class TicketWriteService {
           // TODO optimieren!
           guestId: created.guestProfileId ?? '',
           seatId: created.seatId ?? '',
+          eventId: created.eventId,
+          note: `automatic seat assignment by ticketId: ${created.id}`,
+          actorId: data.actorId,
         },
         'ticket.write-service',
         { traceId: sc.traceId, spanId: sc.spanId },
@@ -452,7 +453,8 @@ export class TicketWriteService {
     return mapTicket(found);
   }
 
-  async generateQrToken(ticketId: string): Promise<string> {
+  async generateQrToken(input: GenerateTokenInput): Promise<string> {
+    const { ticketId, deviceHash } = input;
     const ticket = await this.prisma.ticket.findUnique({ where: { id: ticketId } });
     if (!ticket) {
       throw new NotFoundException('Ticket not found');
@@ -465,10 +467,10 @@ export class TicketWriteService {
       sid: ticket.seatId ?? null,
       dn: ticket.nextNonce ?? 1,
       ts: Date.now(),
-      dh: ticket.deviceHash ?? null,
+      dh: deviceHash,
     };
 
-    return TokenGenerator.generate(payload);
+    return generateWithoutDots(payload);
   }
 
   /**
@@ -479,19 +481,15 @@ export class TicketWriteService {
    *  - securityScan() in TicketWriteService (pre-check)
    *  - "preview scans" or validators
    */
-  async verify(input: {
-    token: string;
-    deviceHash?: string | null;
-    gate?: string | null;
-  }): Promise<VerifyPayload> {
-    const { token, deviceHash, gate: _gate } = input;
+  async verify(input: VerifyTokenInput): Promise<VerifyPayload> {
+    const { token } = input;
 
     // ---------------------------------------------------------
     // 1) Decode JWE and validate structure
     // ---------------------------------------------------------
     let payload: TicketTokenPayload;
     try {
-      payload = await TokenGenerator.decode(token);
+      payload = decodeWithoutDots(token);
     } catch (e) {
       throw new BadRequestException('Invalid QR token (cannot decrypt)');
     }
@@ -521,12 +519,7 @@ export class TicketWriteService {
     }
 
     // Device binding mismatch
-    if (ticket.deviceHash && deviceHash && ticket.deviceHash !== deviceHash) {
-      verdict = ScanVerdict.DEVICE_MISMATCH;
-    }
-
-    // QR encrypted deviceHash mismatch?
-    if (dh && deviceHash && dh !== deviceHash) {
+    if (ticket.deviceHash && dh && ticket.deviceHash !== dh) {
       verdict = ScanVerdict.DEVICE_MISMATCH;
     }
 
@@ -556,7 +549,7 @@ export class TicketWriteService {
       valid: verdict === ScanVerdict.OK,
       expectedNonce: ticket.nextNonce,
       receivedNonce: dn,
-      deviceMatched: !ticket.deviceHash || !deviceHash || ticket.deviceHash === deviceHash,
+      deviceMatched: !ticket.deviceHash || !dh || ticket.deviceHash === dh,
     };
   }
 }

@@ -4,7 +4,7 @@ import { Field, ID, InputType } from '@nestjs/graphql';
 @InputType({
   description: 'Assign a seat to a ticket.',
 })
-export class AssignSeatInput {
+export class AssignSeatInputTicket {
   @Field(() => ID)
   ticketId!: string;
 

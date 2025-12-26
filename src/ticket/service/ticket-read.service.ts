@@ -1,7 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 // src/ticket/service/ticket-read.service.ts
 
 import { PrismaService } from '../../prisma/prisma.service.js';
@@ -10,7 +6,6 @@ import { Ticket } from '../models/entities/ticket.entity.js';
 import { mapScanLogs } from '../models/mapper/scan-logs.mapper.js';
 import { mapTicket, mapTickets } from '../models/mapper/ticket.mapper.js';
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class TicketReadService {
@@ -34,8 +29,8 @@ export class TicketReadService {
   /**
    * Find all tickets matching arbitrary filters.
    */
-  async findMany(params?: Prisma.TicketFindManyArgs): Promise<Ticket[]> {
-    const rows = await this.prisma.ticket.findMany(params);
+  async findMany(): Promise<Ticket[]> {
+    const rows = await this.prisma.ticket.findMany();
     return mapTickets(rows);
   }
 
@@ -69,16 +64,12 @@ export class TicketReadService {
   /**
    * Find ticket by guestProfileId (unique).
    */
-  async findByGuest(guestProfileId: string): Promise<Ticket> {
-    const row = await this.prisma.ticket.findUnique({
+  async findByGuest(guestProfileId: string): Promise<Ticket[]> {
+    const row = await this.prisma.ticket.findMany({
       where: { guestProfileId },
     });
 
-    if (!row) {
-      throw new NotFoundException('Ticket not found for guest');
-    }
-
-    return mapTicket(row);
+    return mapTickets(row);
   }
 
   /**

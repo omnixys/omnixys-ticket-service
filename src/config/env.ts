@@ -54,7 +54,7 @@ export const env = {
   KEYS_PATH: process.env.KEYS_PATH ?? './keys',
 
   /** Tempo tracing endpoint */
-  TEMPO_URI: process.env.TEMPO_URI ?? '',
+  TEMPO_URI: process.env.TEMPO_URI ?? 'http://localhost:4318/v1/traces',
 
   /** Port on which the Node/NestJS server runs */
   PORT: Number(process.env.PORT ?? 4000),
@@ -79,6 +79,7 @@ export const env = {
   COOKIE_SECRET: process.env.COOKIE_SECRET ?? 'omnixys-default-secret',
   REDIS_PC_JWE_KEY: process.env.REDIS_PC_JWE_KEY ?? '',
   PC_JWE_KEY: process.env.PC_JWE_KEY ?? '',
+  PC_SIMPLE_KEY: process.env.PC_SIMPLE_KEY ?? '',
   PC_TTL_SEC: Number(process.env.PC_TTL_SEC ?? 60 * 60 * 24 * 30),
   VALKEY_URL: process.env.VALKEY_URL ?? 'valkey://localhost:6380',
 } as const;

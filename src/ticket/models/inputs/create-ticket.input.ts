@@ -10,8 +10,8 @@ export class CreateTicketInput {
   invitationId!: string;
 
   @Field(() => String, { nullable: true })
-  guestProfileId?: string | null;
+  guestProfileId?: string;
 
   @Field(() => String, { nullable: true })
-  seatId?: string | null;
+  seatId?: string;
 }

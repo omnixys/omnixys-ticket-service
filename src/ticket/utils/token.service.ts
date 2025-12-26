@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
 import { env } from '../../config/env.js';
 import * as jose from 'jose';
 
@@ -11,44 +13,95 @@ export interface TicketTokenPayload {
   dh?: string | null; // deviceHash (optional)
 }
 
-const { PC_JWE_KEY } = env;
-export class TokenGenerator {
-  private static getKey(): Uint8Array {
-    const raw = PC_JWE_KEY;
-    if (!raw) {
-      throw new Error('TICKET_JWE_KEY missing (32 bytes base64 recommended)');
-    }
+/* ---------------------------------------------------------------
+ * Key Management
+ * ------------------------------------------------------------- */
+const {
+  PC_JWE_KEY,
+  // PC_SIMPLE_KEY
+} = env;
 
-    try {
-      const buf = Buffer.from(raw, 'base64');
-      if (buf.length === 32) {
-        return buf;
-      }
-    } catch {
-      /* ignore */
-    }
-
-    return new TextEncoder().encode(raw);
+/**
+ * Returns a 32-byte encryption key (for JWE)
+ */
+function getJweKey(): Uint8Array {
+  const buf = Buffer.from(PC_JWE_KEY, 'base64');
+  if (buf.length === 32) {
+    return buf;
   }
 
-  /**
-   * Generates an encrypted JWE token for QR Codes.
-   */
-  static async generate(payload: TicketTokenPayload): Promise<string> {
-    const key = this.getKey();
+  return new TextEncoder().encode(PC_JWE_KEY).slice(0, 32);
+}
 
-    return new jose.CompactEncrypt(new TextEncoder().encode(JSON.stringify(payload)))
-      .setProtectedHeader({ alg: 'dir', enc: 'A256GCM' })
-      .encrypt(key);
-  }
+/**
+ * Returns a simple key (for Base64 mode)
+ */
+// function getSimpleKey(): Uint8Array {
+//   const buf = Buffer.from(PC_SIMPLE_KEY, 'base64');
+//   if (buf.length > 0) return buf;
 
-  /**
-   * Decrypts and validates the token.
-   */
-  static async decode(token: string): Promise<TicketTokenPayload> {
-    const key = this.getKey();
-    const { plaintext } = await jose.compactDecrypt(token, key);
+//   return new TextEncoder().encode(PC_SIMPLE_KEY);
+// }
 
-    return JSON.parse(new TextDecoder().decode(plaintext)) as TicketTokenPayload;
-  }
+/* ===============================================================
+ * 1) JWE — Token mit Punkten (ENCRYPTED)
+ * =============================================================*/
+
+/**
+ * Generate Token WITH DOTS (JWE Compact Encryption)
+ */
+export async function generateWithDots(payload: TicketTokenPayload): Promise<string> {
+  const key = getJweKey();
+  const plaintext = new TextEncoder().encode(JSON.stringify(payload));
+
+  return new jose.CompactEncrypt(plaintext)
+    .setProtectedHeader({
+      alg: 'dir',
+      enc: 'A256GCM',
+    })
+    .encrypt(key);
+}
+
+/**
+ * Decode Token WITH DOTS (decrypt JWE)
+ */
+export async function decodeWithDots(token: string): Promise<TicketTokenPayload> {
+  const key = getJweKey();
+  const { plaintext } = await jose.compactDecrypt(token, key);
+  return JSON.parse(new TextDecoder().decode(plaintext));
+}
+
+/* ===============================================================
+ * 2) Base64URL — Token OHNE Punkte (COMPACT)
+ * =============================================================*/
+
+/**
+ * Base64URL encode without padding
+ */
+function encodeBase64Url(data: Uint8Array): string {
+  return Buffer.from(data).toString('base64url');
+}
+
+function decodeBase64Url(str: string): Uint8Array {
+  return Buffer.from(str, 'base64url');
+}
+
+/**
+ * Generate Token WITHOUT DOTS (simple, no encryption)
+ */
+export function generateWithoutDots(payload: TicketTokenPayload): string {
+  const json = JSON.stringify(payload);
+  const bytes = new TextEncoder().encode(json);
+
+  return encodeBase64Url(bytes); // → compact string with no dots
+}
+
+/**
+ * Decode Token WITHOUT DOTS
+ */
+export function decodeWithoutDots(token: string): TicketTokenPayload {
+  const bytes = decodeBase64Url(token);
+  const json = new TextDecoder().decode(bytes);
+
+  return JSON.parse(json);
 }

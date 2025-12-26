@@ -4,7 +4,7 @@
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { ScanVerdict } from '../models/enums/scan-verdict.enum.js';
 import { mapTicket } from '../models/mapper/ticket.mapper.js';
-import { TicketTokenPayload, TokenGenerator } from '../utils/token.service.js';
+import { decodeWithoutDots, TicketTokenPayload } from '../utils/token.service.js';
 
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 
@@ -28,7 +28,7 @@ export class VerifyTokenService {
     // ---------------------------------------------------------
     let payload: TicketTokenPayload;
     try {
-      payload = await TokenGenerator.decode(token);
+      payload = await decodeWithoutDots(token);
     } catch (e) {
       throw new BadRequestException('Invalid QR token (cannot decrypt)');
     }

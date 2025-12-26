@@ -15,6 +15,7 @@
  */
 
 import { LoggerPlusService, setGlobalKafkaProducer } from '../logger/logger-plus.service.js';
+import { AssignSeatDTO } from '../ticket/models/dto/assign-seat.input.js';
 import type { TraceContext } from '../trace/trace-context.util.js';
 import type { KafkaEnvelope } from './decorators/kafka-envelope.type.js';
 import { KafkaHeaderBuilder } from './kafka-header-builder.js';
@@ -79,15 +80,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
    * @param service - Ursprungs-Service
    * @param trace - Optionaler Tracing-Kontext
    */
-  async addSeatID(
-    // TODO DTO implementieren
-    payload: {
-      seatId: string;
-      guestId: string;
-    },
-    service: string,
-    trace?: TraceContext,
-  ): Promise<void> {
+  async addSeatID(payload: AssignSeatDTO, service: string, trace?: TraceContext): Promise<void> {
     const envelope: KafkaEnvelope<typeof payload> = {
       event: 'addSeatId',
       service,
@@ -95,7 +88,7 @@ export class KafkaProducerService implements OnModuleInit, OnModuleDestroy {
       trace,
       payload,
     };
-    await this.send(KafkaTopics.event?.addSeat, envelope, trace);
+    await this.send(KafkaTopics.seat?.addSeat, envelope, trace);
   }
 
   // TODO DTO implementieren

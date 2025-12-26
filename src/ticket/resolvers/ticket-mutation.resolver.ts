@@ -1,8 +1,10 @@
 import { UseGuards } from '@nestjs/common';
 import {
   Args,
+  Context,
   Field,
   ID,
+  InputType,
   Mutation,
   ObjectType,
   Resolver,
@@ -15,8 +17,13 @@ import { ScanLog } from '../models/entities/scan-log.entity.js';
 import { Ticket } from '../models/entities/ticket.entity.js';
 
 // Input
+import {
+  CurrentUser,
+  CurrentUserData,
+} from '../../auth/decorators/current-user.decorator.js';
+import { GqlContext } from '../../auth/utils/gql-context.js';
 import { ActivateDeviceInput } from '../models/inputs/activate-device.input.js';
-import { AssignSeatInput } from '../models/inputs/assign-seat.input.js';
+import { AssignSeatInputTicket } from '../models/inputs/assign-seat.input.js';
 import { CreateTicketInput } from '../models/inputs/create-ticket.input.js';
 import { RotateNonceInput } from '../models/inputs/rotate-nonce.input.js';
 import { SecurityScanInput } from '../models/inputs/security-scan.input.js';
@@ -32,6 +39,14 @@ export class TogglePresence {
   log!: ScanLog;
 }
 
+@InputType()
+export class GenerateTokenInput {
+  @Field(() => String)
+  ticketId!: string;
+  @Field(() => String)
+  deviceHash!: string;
+}
+
 @Resolver(() => Ticket)
 export class TicketMutationResolver {
   constructor(private readonly ticketWrite: TicketWriteService) {}
@@ -43,27 +58,33 @@ export class TicketMutationResolver {
   @Mutation(() => Ticket, {
     description: 'Create a new ticket for an approved invitation',
   })
-  async createTicket(@Args('input') input: CreateTicketInput): Promise<Ticket> {
-    return this.ticketWrite.createTicket(input);
+  async createTicket(
+    @Args('input') input: CreateTicketInput,
+    @CurrentUser() user: CurrentUserData,
+  ): Promise<Ticket> {
+    return this.ticketWrite.createTicket({ ...input, actorId: user.id });
   }
 
   // ---------------------------------------------------------
   // 2) Bind device (first-time activation)
   // ---------------------------------------------------------
-  @UseGuards(CookieAuthGuard)
   @Mutation(() => Ticket, {
     description: 'Bind a device to a ticket (first activation)',
   })
   async activateDevice(
     @Args('input') input: ActivateDeviceInput,
+    @Context() ctx: GqlContext,
   ): Promise<Ticket> {
-    return this.ticketWrite.activateDevice(input.ticketId, input);
+    return this.ticketWrite.activateDevice(input.ticketId, {
+      deviceHash: input.deviceHash,
+      devicePublicKey: input.devicePublicKey,
+      ip: ctx.req.ip ?? input.ip ?? null,
+    });
   }
 
   // ---------------------------------------------------------
   // 3) Rotate nonce for QR token (security)
   // ---------------------------------------------------------
-  @UseGuards(CookieAuthGuard)
   @Mutation(() => Ticket, {
     description: 'Rotate nonce for a ticket’s QR token',
   })
@@ -75,9 +96,10 @@ export class TicketMutationResolver {
     description: 'Rotate nonce for a ticket’s QR token',
   })
   async generateToken(
-    @Args('ticketId', { type: () => ID }) ticketId: string,
+    @Args('input', { type: () => GenerateTokenInput })
+    input: GenerateTokenInput,
   ): Promise<string> {
-    return this.ticketWrite.generateQrToken(ticketId);
+    return this.ticketWrite.generateQrToken(input);
   }
 
   @Mutation(() => VerifyPayload, {
@@ -137,8 +159,11 @@ export class TicketMutationResolver {
   @UseGuards(CookieAuthGuard)
   @Mutation(() => Ticket, {
     description: 'Assign a seat to a ticket (can only be done once)',
+    name: 'assignSeatToTicket',
   })
-  async assignSeat(@Args('input') input: AssignSeatInput): Promise<Ticket> {
+  async assignSeat(
+    @Args('input') input: AssignSeatInputTicket,
+  ): Promise<Ticket> {
     return this.ticketWrite.assignSeat(input.ticketId, input.seatId);
   }
 

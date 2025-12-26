@@ -28,13 +28,14 @@ export const KafkaTopics = {
     // TODO bessere namen
     addGuest: `${SERVICE}.add.user`,
   },
-  event: {
+  seat: {
     // TODO bessere namen
-    addSeat: `${SERVICE}.add.event`,
+    addSeat: `${SERVICE}.add.seat`,
   },
   [SERVICE]: {
     // TODO implementieren
     deleteTickets: `${SERVICE}.delete.user`,
+    createTicket: `authentication.create.${SERVICE}`,
   },
   logstream: {
     log: `logstream.log.${SERVICE}`,

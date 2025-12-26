@@ -36,6 +36,15 @@ export class TicketQueryResolver {
     return this.ticketRead.findMany();
   }
 
+  @Query(() => Ticket, {
+    description: 'Fetch a single ticket by its cuid',
+  })
+  async ticketById2(
+    @Args('id', { type: () => ID }) id: string,
+  ): Promise<Ticket> {
+    return this.ticketRead.findById(id);
+  }
+
   // ---------------------------------------------------------
   // 2) Get all tickets for a given event
   // ---------------------------------------------------------
@@ -53,12 +62,12 @@ export class TicketQueryResolver {
   // 3) Find ticket belonging to a specific guest profile
   // ---------------------------------------------------------
   @UseGuards(CookieAuthGuard)
-  @Query(() => Ticket, {
+  @Query(() => [Ticket], {
     description: 'Find tickets linked to a specific guestProfileId',
   })
   async ticketsByGuest(
     @Args('guestProfileId', { type: () => ID }) guestProfileId: string,
-  ): Promise<Ticket> {
+  ): Promise<Ticket[]> {
     return this.ticketRead.findByGuest(guestProfileId);
   }
 
@@ -89,10 +98,10 @@ export class TicketQueryResolver {
   }
 
   @UseGuards(CookieAuthGuard)
-  @Query(() => Ticket, {
+  @Query(() => [Ticket], {
     description: 'Find tickets linked to a authenticated user',
   })
-  async getMyTickets(@CurrentUser() user: CurrentUserData): Promise<Ticket> {
+  async getMyTickets(@CurrentUser() user: CurrentUserData): Promise<Ticket[]> {
     return this.ticketRead.findByGuest(user.id);
   }
 }
