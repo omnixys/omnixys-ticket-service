@@ -1,3 +1,5 @@
+// TODO eslint
+/* eslint-disable @typescript-eslint/await-thenable */
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 // src/ticket/service/verify-token.service.ts

@@ -1,3 +1,5 @@
+// TODO eslint
+/* eslint-disable @typescript-eslint/member-ordering */
 import 'fastify';
 
 declare module 'fastify' {

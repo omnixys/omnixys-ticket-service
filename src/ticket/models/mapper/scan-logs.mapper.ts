@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // src/ticket/models/mapper/scan-log.mapper.ts
 import type { ScanLog as ScanLogEntity } from '../entities/scan-log.entity.js';
 import type { PresenceState } from '../enums/presence-state.enum.js';
