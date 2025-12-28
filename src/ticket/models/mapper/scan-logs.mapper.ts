@@ -1,8 +1,8 @@
 // src/ticket/models/mapper/scan-log.mapper.ts
+import type { ScanLog as PrismaScanLog } from '../../../prisma/generated/client.js';
 import type { ScanLog as ScanLogEntity } from '../entities/scan-log.entity.js';
 import type { PresenceState } from '../enums/presence-state.enum.js';
 import type { ScanVerdict } from '../enums/scan-verdict.enum.js';
-import type { ScanLog as PrismaScanLog } from '@prisma/client';
 
 /**
  * Maps a Prisma ScanLog row → GraphQL ScanLog Entity.

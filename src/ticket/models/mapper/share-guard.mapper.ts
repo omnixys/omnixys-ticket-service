@@ -1,5 +1,5 @@
+import type { ShareGuard } from '../../../prisma/generated/client.js';
 import type { ShareGuard as ShareGuardEntity } from '../entities/share-guard.entity.js';
-import type { ShareGuard } from '@prisma/client';
 
 /**
  * Maps a Prisma ShareGuard row → GraphQL ShareGuard Entity.

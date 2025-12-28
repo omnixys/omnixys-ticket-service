@@ -1,7 +1,7 @@
 // src/ticket/models/mapper/ticket.mapper.ts
+import type { Ticket as PrismaTicket } from '../../../prisma/generated/client.js';
 import type { Ticket as TicketEntity } from '../entities/ticket.entity.js';
 import type { PresenceState } from '../enums/presence-state.enum.js';
-import type { Ticket as PrismaTicket } from '@prisma/client';
 
 /**
  * Maps a Prisma Ticket row → GraphQL Ticket Entity
