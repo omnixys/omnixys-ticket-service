@@ -541,6 +541,9 @@ export class TicketWriteService {
       verdict = ScanVerdict.REPLAY;
     }
 
+    if (verdict === ScanVerdict.OK && !ticket.checkedInAt) {
+      ticket.checkedInAt = new Date();
+    }
     // ---------------------------------------------------------
     // 4) Result structure (no state update here)
     // ---------------------------------------------------------

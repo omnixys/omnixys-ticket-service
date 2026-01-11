@@ -1,5 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // src/ticket/models/mapper/ticket.mapper.ts
 import type { Ticket as PrismaTicket } from '../../../prisma/generated/client.js';
+import { n2u } from '../../utils/null-to-undefined.js';
 import type { Ticket as TicketEntity } from '../entities/ticket.entity.js';
 import type { PresenceState } from '../enums/presence-state.enum.js';
 
@@ -30,6 +32,7 @@ export function mapTicket(row: PrismaTicket): TicketEntity {
     // --- State ---
     currentState: row.currentState as PresenceState,
     revoked: row.revoked,
+    checkedInAt: n2u(row.checkedInAt),
 
     // --- Timestamps ---
     createdAt: row.createdAt,

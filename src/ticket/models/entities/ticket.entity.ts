@@ -67,6 +67,9 @@ export class Ticket {
   @Field(() => Boolean)
   revoked!: boolean;
 
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  checkedInAt?: Date;
+
   // ----------------------------------------------------------
   // Timestamps
   // ----------------------------------------------------------

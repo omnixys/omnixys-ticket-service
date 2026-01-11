@@ -37,6 +37,7 @@ model Ticket {
   lastRotatedAt   DateTime? @map("last_rotated_at")
 
   // State
+  checkedInAt  DateTime?     @map("checked_in_at")
   currentState PresenceState @default(OUTSIDE) @map("current_state")
   revoked      Boolean       @default(false) @map("revoked")
 
