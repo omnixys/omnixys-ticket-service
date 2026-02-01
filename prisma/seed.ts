@@ -21,10 +21,10 @@
 /* ----------------------------------------------------------------------
  * Constants
  * -------------------------------------------------------------------- */
-const EVENT_ID = 'cmjzoow54000nhmijxkg2fb7h';
+const EVENT_ID = 'cmk93ux98000nq00663i31s8h';
 const GUEST_ID = 'ae489d9b-96ce-4942-bcb1-c2e2a0c92e83';
-const SEAT_ID = 'cmk6vcaod00106pijaq5pqq6h';
-const INVITATION_ID = 'cmk6vboab0000v2ij2jg05xl0';
+const SEAT_ID = 'cmk93w61f001031069znui39o';
+const INVITATION_ID = 'cmk93xzwl0000im061rtro8yw';
 
 /* ----------------------------------------------------------------------
  * Seed
