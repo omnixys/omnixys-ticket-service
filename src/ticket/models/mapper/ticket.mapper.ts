@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 // src/ticket/models/mapper/ticket.mapper.ts
 import type { Ticket as PrismaTicket } from '../../../prisma/generated/client.js';
 import { n2u } from '../../utils/null-to-undefined.js';
