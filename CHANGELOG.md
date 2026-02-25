@@ -3,6 +3,10 @@
 All notable changes in this project will be documented in this file.
 
 
+## <small>1.0.1 (2026-02-25)</small>
+
+* fix(ci): update CI ([122634cbe85e459e109491f5d562e3d5b312d00d](https://github.com/omnixys/omnixys-ticket-service/commit/122634cbe85e459e109491f5d562e3d5b312d00d))
+
 ## 1.0.0 (2026-02-25)
 
 * feat(): workflow completed ([3d380a028d91455ac9049285bc6e79ac69038915](https://github.com/omnixys/omnixys-ticket-service/commit/3d380a028d91455ac9049285bc6e79ac69038915))
