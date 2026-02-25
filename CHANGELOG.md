@@ -3,6 +3,11 @@
 All notable changes in this project will be documented in this file.
 
 
+## <small>1.0.2 (2026-02-25)</small>
+
+* fix(ci): change serets.SERVICE to vars.SERVICE ([0e81143f69cc25d80a517b5e7e04154007d08ada](https://github.com/omnixys/omnixys-ticket-service/commit/0e81143f69cc25d80a517b5e7e04154007d08ada))
+* Merge branch 'main' of https://github.com/omnixys/omnixys-ticket-service ([f281a55cd087edc334350683a3dbd721fa838ea9](https://github.com/omnixys/omnixys-ticket-service/commit/f281a55cd087edc334350683a3dbd721fa838ea9))
+
 ## <small>1.0.1 (2026-02-25)</small>
 
 * fix(ci): update CI ([122634cbe85e459e109491f5d562e3d5b312d00d](https://github.com/omnixys/omnixys-ticket-service/commit/122634cbe85e459e109491f5d562e3d5b312d00d))
