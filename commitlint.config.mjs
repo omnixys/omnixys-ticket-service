@@ -41,6 +41,7 @@ export default {
     'subject-case': [1, 'always', ['sentence-case', 'lower-case']],
     'header-max-length': [2, 'always', 100],
 
+    
     /**
      * 🔴 REQUIRE at least one issue reference
      * Accepts:
