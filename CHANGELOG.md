@@ -3,6 +3,10 @@
 All notable changes in this project will be documented in this file.
 
 
+## <small>1.0.3 (2026-02-26)</small>
+
+* fix(release-ci): fix Release CI Job ([186641c4eb9e43e3d1c956c53f25f95842057488](https://github.com/omnixys/omnixys-ticket-service/commit/186641c4eb9e43e3d1c956c53f25f95842057488))
+
 ## <small>1.0.2 (2026-02-25)</small>
 
 * fix(ci): change serets.SERVICE to vars.SERVICE ([0e81143f69cc25d80a517b5e7e04154007d08ada](https://github.com/omnixys/omnixys-ticket-service/commit/0e81143f69cc25d80a517b5e7e04154007d08ada))
